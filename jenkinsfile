@@ -1,87 +1,34 @@
-pipeline{
-    agent any
-    tools {
-        maven 'maven3'
-    }
-    environment {
-        DOCKER_TAG = getVersion()
-    }
-    stages{
-        stage('SCM'){
-            steps{
-                git credentialsId: 'github', 
-                    url: 'https://github.com/hazem-soussi/automated_pipline_ansible'
-            }
-        }
-        
-        stage('Maven Build'){
-            steps{
-                sh "mvn clean package"
-            }
-        }
-        
-        stage('Docker Build'){
-            steps{
-                sh "docker build . -t hazem1998/hariapp:${DOCKER_TAG} "
-            }
-        }
-        
-        stage('DockerHub Push'){
-            steps{
-                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
-                    sh "docker login -u hazem1998 -p ${dockerHubPwd}"
-                }
-                
-                sh "docker push kammana/hariapp:${DOCKER_TAG} "
-            }
-        }
-        
-        stage('Docker Deploy'){
-            steps{
-                ansiblePlaybook credentialsId: 'dev-server', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
-            }
-        }
-    }
-}
-
-def getVersion(){
-    def commitHash = sh label: '', returnStdout: true, script: 'git rev-parse --short HEAD'
-    return commitHash
-}
-
-
 pipeline {
     agent any
-    
+
+    environment {
+        DOCKER_IMAGE = "dockimg:latest"
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your code from the repository
-                git credentialsId: 'github', 
-                    url: 'https://github.com/salmakacem1999/ProjetDevops'
-               // checkout scm
+                checkout scm
             }
         }
-        
-        stage('Install Dependencies') {
+
+        stage('Build and Push Docker Image') {
             steps {
-                // Install Symfony project dependencies
-                sh 'composer install'
+                script {
+                    def dockerImage = docker.build("${DOCKER_IMAGE}", "-f Dockerfile .")
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        dockerImage.push()
+                    }
+                }
             }
         }
-        
-        stage('Build and Test') {
+
+        stage('Deploy with Ansible') {
             steps {
-                // Build and test your Symfony application
-                sh 'php bin/console cache:clear'
-                sh 'php bin/phpunit'
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                // Deploy your Symfony application
-                sh 'rsync -avz --delete ./ user@server:/path/to/destination'
+                ansiblePlaybook credentialsId: 'ansible-credentials',
+                    inventory: 'ansible-inventory/dev',
+                    playbook: 'ansible-playbooks/deploy-symfony.yml',
+                    extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
             }
         }
     }
