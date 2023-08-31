@@ -1,26 +1,28 @@
-# Utilisez une image PHP avec Apache comme base
-FROM php:7.4-apache
 
-# Installer les dépendances système nécessaires
-RUN apt-get update && apt-get install -y \
-    libicu-dev \
-    libzip-dev \
-    unzip \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-install intl pdo pdo_mysql zip
+# Utiliser une image PHP comme base
+FROM php:7.4-fpm
 
-# Configuration d'Apache
-RUN a2enmod rewrite
-RUN chown -R www-data:www-data /var/www/html
+# Répertoire de travail dans le conteneur
+WORKDIR /var/www/html
 
-# Copier les fichiers de l'application Symfony dans le conteneur
+
+# Copier les fichiers de l'application dans le conteneur
 COPY . /var/www/html/
 
-# Configuration de l'environnement Symfony
-ENV APP_ENV=prod
+# Installer les dépendances système et extensions PHP nécessaires
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql
 
-# Exposer le port 80
-EXPOSE 80
+# Installer Composer (gestionnaire de dépendances PHP)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Commande par défaut pour démarrer Apache
-CMD ["apache2-foreground"]
+# Installer les dépendances du projet avec Composer
+#RUN composer clear-cache
+#RUN composer install --no-interaction --optimize-autoloader
+
+# Exposer le port 9000 pour PHP-FPM
+EXPOSE 9000
+
+# Commande de démarrage pour PHP-FPM
+CMD ["php-fpm"]
