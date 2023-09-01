@@ -24,11 +24,15 @@ pipeline {
         }
 
         stage('Deploy with Ansible') {
-            steps {
-                ansiblePlaybook credentialsId: 'ansible-credentials',
-                   inventory: 'ansible-inventory/dev',
-                   playbook: 'ansible-playbooks/deploy-symfony.yml',
-                   extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
+           steps {
+                script {
+                    ansiblePlaybook(
+                        credentialsId: 'ansible-credentials',
+                        inventory: 'ansible-inventory/dev',
+                        playbook: 'ansible-playbooks/deploy-symfony.yml',
+                        extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
+                    )
+                }
             }
         }
     }
