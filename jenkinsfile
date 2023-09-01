@@ -1,5 +1,38 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_IMAGE = 'dockimg' // Spécifiez le nom de votre image Docker
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Deploy with Ansible') {
+            steps {
+                script {
+                    ansiblePlaybook(
+                        credentialsId: 'ansible-credentials',
+                        inventory: 'ansible-inventory/dev',
+                        playbook: 'ansible-playbooks/deploy-symfony.yml',
+                        extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+/* pipeline {
+    agent any
 
     environment {
         DOCKER_IMAGE = "dockimg:latest"
@@ -12,16 +45,6 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
-            steps {
-                script {
-                    def dockerImage = docker.build("${DOCKER_IMAGE}", "-f Dockerfile .")
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
 
         stage('Deploy with Ansible') {
            steps {
@@ -37,3 +60,4 @@ pipeline {
         }
     }
 }
+ */
