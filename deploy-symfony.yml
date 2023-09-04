@@ -1,13 +1,13 @@
 ---
 - name: Deploy PHP Application
-  hosts: all
+  hosts: webserver
   become: yes
 
   tasks:
     - name: Copy Docker Compose file to target host
       copy:
-        src: /path/to/your/docker-compose.yml
-        dest: /path/on/target/host/docker-compose.yml
+        src: /ProjetDevops/docker-compose.yml
+        dest: /ProjetDevops/docker-compose.yml
 
     - name: Start Docker Compose
-      command: docker-compose -f /path/on/target/host/docker-compose.yml up -d
+      command: docker-compose -f /ProjetDevops/docker-compose.yml up -d
