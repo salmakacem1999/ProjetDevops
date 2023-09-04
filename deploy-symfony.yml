@@ -1,6 +1,6 @@
 ---
 - name: Deploy PHP Application
-  hosts: webserver
+  hosts: localhost
   become: yes
 
   tasks:
