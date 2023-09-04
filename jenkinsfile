@@ -12,7 +12,7 @@ pipeline {
         stage('Deploy with Ansible') {
             steps {
               
-                    ansiblePlaybook(
+                    ansible-playbook(
                         credentialsId: 'ansible-credentials',
                         inventory: 'dev.inv',
                         playbook: 'deploy-symfony.yml',
