@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         PATH = "/usr/bin/ansible:/usr/bin/ansible-playbook:$PATH"
-        ANS_HOME = tool('ansible')
         DOCKER_IMAGE = 'dockimg' // Spécifiez le nom de votre image Docker
     }
     stages {
