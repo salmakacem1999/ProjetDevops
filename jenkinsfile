@@ -14,8 +14,7 @@ pipeline {
             steps {
                 ansiblePlaybook(
                     credentialsId: 'ProjetDevops/ansible-credentials',
-                    inventory: 'ProjetDevops/dev.inv',
-                    playbook: 'ProjetDevops/deploy-symfony.yml',
+                    playbook: '/usr/bin/ansible-playbook',
                     extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
                 )
             }
