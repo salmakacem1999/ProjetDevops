@@ -1,6 +1,6 @@
 server {
     listen {{ 8000 }}; # Port défini dans l'environnement (par exemple, 8000)
-    localhost; # Remplacez par le nom de domaine ou l'adresse IP de votre serveur
+    server_name localhost; # Remplacez par le nom de domaine ou l'adresse IP de votre serveur
 
     root /var/www/ProjetDevops/web; # Chemin vers le répertoire web de votre application Symfony
 
