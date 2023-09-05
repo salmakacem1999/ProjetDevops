@@ -15,3 +15,10 @@
         src: parameters.yml.j2
         dest: /var/www/ProjetDevops/app/config/parameters.yml
       when: not skip_parameters
+
+    - name: Update Nginx configuration for Symfony
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/symfony
+        notify: Restart Nginx
+
