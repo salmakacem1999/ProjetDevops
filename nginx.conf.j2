@@ -1,0 +1,25 @@
+server {
+    listen {{ 8000 }}; # Port défini dans l'environnement (par exemple, 8000)
+    localhost; # Remplacez par le nom de domaine ou l'adresse IP de votre serveur
+
+    root /var/www/ProjetDevops/web; # Chemin vers le répertoire web de votre application Symfony
+
+    location / {
+        try_files $uri /app.php$is_args$args;
+    }
+
+    location ~ ^/app\.php(/|$) {
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock; # Chemin vers le socket PHP-FPM
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        internal;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+
+    error_log /var/log/nginx/symfony_error.log;
+    access_log /var/log/nginx/symfony_access.log;
+}
