@@ -14,7 +14,7 @@ pipeline {
             steps {
                 ansiblePlaybook(
                     credentialsId: 'ansible-credentials',
-                    playbook: '\usr\bin\ansible-playbook',
+                    playbook: '/usr/bin/ansible-playbook',
                     extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
                 )
             }

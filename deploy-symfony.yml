@@ -1,0 +1,17 @@
+---
+- hosts: azure_vm
+  tasks:
+    - name: Clone Symfony code from Git
+      git:
+        repo: https://github.com/salmakacem1999/ProjetDevops.git
+        dest: /var/www/ProjetDevops
+        update: yes
+
+    - name: Install Composer dependencies
+      command: composer install --no-interaction --working-dir=/var/www/ProjetDevops
+
+    - name: Set up Symfony parameters
+      template:
+        src: parameters.yml.j2
+        dest: /var/www/your-symfony-app/app/config/parameters.yml
+      when: not skip_parameters
