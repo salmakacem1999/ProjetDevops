@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: azure_vm
   tasks:
     - name: Clone Symfony code from Git
       git:
