@@ -23,11 +23,11 @@ pipeline {
         stage('Check Symfony Port') {
             steps {
                 script {
-                    def response = sh(script: "curl -Is http://localhost:${8000} | head -n 1 | awk '{print $2}'", returnStatus: true)
+                    def response = sh(script: "curl -Is http://localhost:$8000 | head -n 1 | awk '{print $2}'", returnStatus: true)
                     if (response == 200) {
-                        echo "Symfony application is accessible on port ${8000}."
+                        echo "Symfony application is accessible on port $8000."
                     } else {
-                        error "Symfony application is not accessible on port ${8000}."
+                        error "Symfony application is not accessible on port $8000."
                     }
                 }
             }
