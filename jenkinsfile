@@ -3,7 +3,7 @@ pipeline {
     environment {
         PATH = "/usr/bin/ansible:/usr/bin/ansible-playbook:$PATH"
         DOCKER_IMAGE = 'dockimg' // Spécifiez le nom de votre image Docker
-        SYMFONY_PORT = 8081 // Port sur lequel Symfony sera accessible
+        SYMFONY_PORT = 9000 // Port sur lequel Symfony sera accessible
     }
     stages {
         stage('Checkout') {
