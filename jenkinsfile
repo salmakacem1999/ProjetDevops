@@ -3,7 +3,7 @@ pipeline {
     environment {
         PATH = "/usr/bin/ansible:/usr/bin/ansible-playbook:$PATH"
         DOCKER_IMAGE = 'dockimg' // Spécifiez le nom de votre image Docker
-        SYMFONY_PORT = 8000
+        SYMFONY_PORT = 8000 // Port sur lequel Symfony sera accessible
     }
     stages {
         stage('Checkout') {
@@ -23,53 +23,14 @@ pipeline {
         stage('Check Symfony Port') {
             steps {
                 script {
-                    def response = sh(script: "curl -Is http://localhost:$8000 | head -n 1 | awk '{print $2}'", returnStatus: true)
+                    def response = sh(script: "curl -Is \"http://localhost:${SYMFONY_PORT}\" | head -n 1 | awk '{print \$2}'", returnStatus: true)
                     if (response == 200) {
-                        echo "Symfony application is accessible on port $8000."
+                        echo "Symfony application is accessible on port ${SYMFONY_PORT}."
                     } else {
-                        error "Symfony application is not accessible on port $8000."
+                        error "Symfony application is not accessible on port ${SYMFONY_PORT}."
                     }
                 }
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
-/* pipeline {
-    agent any
-
-    environment {
-        DOCKER_IMAGE = "dockimg:latest"
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-
-        stage('Deploy with Ansible') {
-           steps {
-                script {
-                    ansiblePlaybook(
-                        credentialsId: 'ansible-credentials',
-                        inventory: 'ansible-inventory/dev',
-                        playbook: 'ansible-playbooks/deploy-symfony.yml',
-                        extras: "-e DOCKER_IMAGE=${DOCKER_IMAGE}"
-                    )
-                }
-            }
-        }
-    }
-}
- */
